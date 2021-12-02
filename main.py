@@ -17,6 +17,7 @@ with open('gab.csv') as dataset:
 
 non_hateful = open("non_hateful.txt", "a")
 hateful = open("hateful.txt", "a")
+train = open("train.txt", "a")
 
 for i in range(len(conversations)): #each conversation
     for convo in conversations[i][1].split('\n'): #each post in the conversation
@@ -52,12 +53,15 @@ for i in range(len(conversations)): #each conversation
 
         elif (post_index in conversations[i][2] and not is_written):
             hateful.write(f"{first_let_capizalized} \n")
+            train.write(f"{first_let_capizalized}%&QQ@hatefull\n")
             is_written = True
 
         elif (post_index not in conversations[i][2] and not is_written):
             non_hateful.write(f"{first_let_capizalized} \n")
+            train.write(f"{first_let_capizalized}%&QQ@nothatefull\n")
             is_written = True
 
 
 non_hateful.close()
 hateful.close()
+train.close()
