@@ -17,7 +17,7 @@ with open('gab.csv') as dataset:
 
 non_hateful = open("non_hateful.txt", "a")
 hateful = open("hateful.txt", "a")
-train = open("train.txt", "a")
+all_data = open("all_data.txt", "a") #both hateful and not hateful
 
 for i in range(len(conversations)): #each conversation
     for convo in conversations[i][1].split('\n'): #each post in the conversation
@@ -30,7 +30,7 @@ for i in range(len(conversations)): #each conversation
                 
         base_joined = ''.join(base) #combine chars
         clear_withs  = base_joined.replace("w/", "with") #fix withs
-        post_index = clear_withs[:1]
+        post_index = clear_withs[0:clear_withs.find('.')] #get the index num of post
         is_written = False
         no_index = clear_withs.lstrip('0123456789.') #remove the index numbers of the posts
         no_tags = re.sub('(?<=^|(?<=[^a-zA-Z0-9-_\.]))#([A-Za-z0-9]+[A-Za-z0-9-_]+)', '', no_index)
@@ -47,21 +47,19 @@ for i in range(len(conversations)): #each conversation
         for abrev in abrevs:
             first_let_capizalized = first_let_capizalized.replace(abrev, abrev.title())
 
-
         if (first_let_capizalized.strip() == ''):
             pass
 
         elif (post_index in conversations[i][2] and not is_written):
             hateful.write(f"{first_let_capizalized} \n")
-            train.write(f"{first_let_capizalized}%&QQ@hatefull\n")
+            all_data.write(f"{first_let_capizalized}%&QQ@hateful\n")
             is_written = True
 
         elif (post_index not in conversations[i][2] and not is_written):
             non_hateful.write(f"{first_let_capizalized} \n")
-            train.write(f"{first_let_capizalized}%&QQ@nothatefull\n")
+            all_data.write(f"{first_let_capizalized}%&QQ@nothateful\n")
             is_written = True
-
 
 non_hateful.close()
 hateful.close()
-train.close()
+all_data.close()
