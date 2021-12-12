@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 import nltk
-from sklearn.naive_bayes import MultinomialNB
+import random
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.corpus import stopwords
@@ -9,7 +10,7 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.preprocessing import LabelEncoder
 from collections import defaultdict
 from nltk.corpus import wordnet as wn
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import model_selection, svm, naive_bayes
 from sklearn.metrics import accuracy_score
 nltk.download('punkt')
@@ -17,6 +18,8 @@ nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('stopwords')
 df=pd.read_csv('data.csv',sep=";", encoding='cp1252')
+df = df.sample(frac=1).reset_index(drop=True)
+df.head()
 
 # Step - a : Remove blank rows if any.
 df['sentence'].dropna(inplace=True)
@@ -50,15 +53,38 @@ Encoder = LabelEncoder()
 Train_Y = Encoder.fit_transform(Train_Y)
 Test_Y = Encoder.fit_transform(Test_Y)
 
+
+#Tfidf Vectorizer
 Tfidf_vect = TfidfVectorizer()
 Tfidf_vect.fit(df['text_final'])
 Train_X_Tfidf = Tfidf_vect.transform(Train_X)
 Test_X_Tfidf = Tfidf_vect.transform(Test_X)
 
+'''
+#Count Vectorizer
+Count_vect = CountVectorizer()
+Count_vect.fit(df['text_final'])
+Train_X_Count = Count_vect.transform(Train_X)
+Test_X_Count = Count_vect.transform(Test_X)
+'''
+
+#With Tdidf Vectorizer
 # fit the training dataset on the NB classifier
 Naive = naive_bayes.MultinomialNB()
+
 Naive.fit(Train_X_Tfidf,Train_Y)
 # predict the labels on validation dataset
 predictions_NB = Naive.predict(Test_X_Tfidf)
 # Use accuracy_score function to get the accuracy
-print("Naive Bayes Accuracy Score -> ",accuracy_score(predictions_NB, Test_Y)*100)
+print("Naive Bayes Accuracy Score with Tdidf Vectorizer -> ",accuracy_score(predictions_NB, Test_Y)*100)
+
+'''
+#With Count Vectorizer
+# fit the training dataset on the NB classifier
+Naive = naive_bayes.MultinomialNB()
+Naive.fit(Train_X_Count,Train_Y)
+# predict the labels on validation dataset
+predictions_NB = Naive.predict(Test_X_Count)
+# Use accuracy_score function to get the accuracy
+print("Naive Bayes Accuracy Score with Count Vectorizer -> ",accuracy_score(predictions_NB, Test_Y)*100)
+'''

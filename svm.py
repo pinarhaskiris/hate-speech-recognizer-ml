@@ -7,7 +7,7 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.preprocessing import LabelEncoder
 from collections import defaultdict
 from nltk.corpus import wordnet as wn
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score
 import nltk
@@ -16,7 +16,9 @@ nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('stopwords')
 df=pd.read_csv('data.csv',sep=";", encoding='cp1252')
+df = df.sample(frac=1).reset_index(drop=True)
 df.head()
+print(df)
 
 # Step - a : Remove blank rows if any.
 df['sentence'].dropna(inplace=True)
@@ -50,6 +52,8 @@ Encoder = LabelEncoder()
 Train_Y = Encoder.fit_transform(Train_Y)
 Test_Y = Encoder.fit_transform(Test_Y)
 
+
+#With Tfidf Vectorizer
 Tfidf_vect = TfidfVectorizer()
 Tfidf_vect.fit(df['text_final'])
 Train_X_Tfidf = Tfidf_vect.transform(Train_X)
@@ -60,4 +64,19 @@ SVM.fit(Train_X_Tfidf,Train_Y)
 # predict the labels on validation dataset
 predictions_SVM = SVM.predict(Test_X_Tfidf)
 # Use accuracy_score function to get the accuracy
-print("SVM Accuracy Score -> ",accuracy_score(predictions_SVM, Test_Y)*100)
+print("SVM Accuracy Score with Tdidf Vectorizer -> ",accuracy_score(predictions_SVM, Test_Y)*100)
+
+'''
+#With Count Vectorizer
+Count_vect = CountVectorizer()
+Count_vect.fit(df['text_final'])
+Train_X_Count = Count_vect.transform(Train_X)
+Test_X_Count = Count_vect.transform(Test_X)
+
+SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+SVM.fit(Train_X_Count,Train_Y)
+# predict the labels on validation dataset
+predictions_SVM = SVM.predict(Test_X_Count)
+# Use accuracy_score function to get the accuracy
+print("SVM Accuracy Score with Count Vectorizer-> ",accuracy_score(predictions_SVM, Test_Y)*100)
+'''
