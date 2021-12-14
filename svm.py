@@ -11,6 +11,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score
 import nltk
+import pickle 
+
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
@@ -18,7 +20,6 @@ nltk.download('stopwords')
 df=pd.read_csv('data.csv',sep=";", encoding='cp1252')
 df = df.sample(frac=1).reset_index(drop=True)
 df.head()
-print(df)
 
 # Step - a : Remove blank rows if any.
 df['sentence'].dropna(inplace=True)
@@ -59,10 +60,16 @@ Tfidf_vect.fit(df['text_final'])
 Train_X_Tfidf = Tfidf_vect.transform(Train_X)
 Test_X_Tfidf = Tfidf_vect.transform(Test_X)
 
+
 SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
 SVM.fit(Train_X_Tfidf,Train_Y)
+
+# save the model to disk
+filename = 'finalized_model_SVM.sav'
+pickle.dump(SVM, open(filename, 'wb'))
+
 # predict the labels on validation dataset
-predictions_SVM = SVM.predict(Test_X_Tfidf)
+#predictions_SVM = SVM.predict(Test_X_Tfidf)
 # Use accuracy_score function to get the accuracy
 print("SVM Accuracy Score with Tdidf Vectorizer -> ",accuracy_score(predictions_SVM, Test_Y)*100)
 
