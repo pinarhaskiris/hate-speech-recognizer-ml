@@ -18,6 +18,8 @@ loaded_model = pickle.load(open('finalized_model_SVM.sav', 'rb'))
 
 new_input = input('Enter test sentence: ')
 
+# ----------------------- PREPROCESSING
+
 # Step - b : Change all the text to lower case. This is required as python interprets 'dog' and 'DOG' differently
 new_input = new_input.lower()
 
@@ -44,17 +46,23 @@ for word, tag in pos_tag(new_input):
         word_Final = word_Lemmatized.lemmatize(word,tag_map[tag[0]])
         Final_words.append(word_Final)
 
-
+# ----------------------- END OF PREPROCESSING
+'''
 #With Tfidf Vectorizer
 Tfidf_vect = TfidfVectorizer()
 Tfidf_vect.fit(Final_words)
 Test_X_Tfidf = Tfidf_vect.transform(new_input)
+'''
 
+# input_final_ver = ' '.join(Final_words)
+# input_in_float = pd.to_numeric(input_final_ver)
 
+'''
 print('TEST X TFIDF', Test_X_Tfidf)
 print('NEW INPUT', new_input)
 
-new_output = loaded_model.predict(Test_X_Tfidf)
+print(ser_float)
+new_output = loaded_model.predict(ser_float)
 
 print('PREDICTION: ', new_output)
-
+'''
