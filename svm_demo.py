@@ -53,8 +53,10 @@ Tfidf_vect = TfidfVectorizer()
 Tfidf_vect.fit(Final_words)
 Test_X_Tfidf = Tfidf_vect.transform(new_input)
 
+"""
 print('TEST X TFIDF', Test_X_Tfidf)
 print('NEW INPUT', new_input)
+"""
 
 new_output = loaded_model.predict(Test_X_Tfidf)
 print('PREDICTION: ', new_output)
