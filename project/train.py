@@ -31,7 +31,7 @@ dp = pd.read_csv('processed_data_vol2.csv', encoding='cp1252')
 # read the processed data
 dc = pd.read_csv('class.csv', encoding='cp1252')
 
-Train_X, Test_X, Train_Y, Test_Y = model_selection.train_test_split(dp['text_final'], dc['class'],test_size=0.3)
+Train_X, Test_X, Train_Y, Test_Y = model_selection.train_test_split(dp['text_final'], dc['class'], test_size=0.3)
 
 Encoder = LabelEncoder()
 Train_Y = Encoder.fit_transform(Train_Y)

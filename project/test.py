@@ -15,11 +15,6 @@ import pickle
 import csv
 import tkinter as tk
 
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('stopwords')
-
 # load the model SVM from disk
 loaded_model_svm = pickle.load(open('finalized_model_SVM.sav', 'rb'))
 
@@ -33,25 +28,43 @@ dp = pd.read_csv('processed_data_vol2.csv', encoding='cp1252')
 Tfidf_vect = TfidfVectorizer()
 Tfidf_vect.fit(dp['text_final'])
 
+
+# INTERFACE
+
 root= tk.Tk()
 
-canvas = tk.Canvas(root, width = 1200, height = 700,  relief = 'raised')
+canvas = tk.Canvas(root, width = 1200, height = 720,  relief = 'raised')
 canvas.pack()
 
 label = tk.Label(root, text='Hate-Speech Recognizer')
-label.config(font=('helvetica', 18, 'bold'))
-canvas.create_window(600, 225, window=label)
+label.config(font=('helvetica', 28, 'bold'))
+canvas.create_window(600, 155, window=label)
 
 label = tk.Label(root, text='Enter sentence:')
-label.config(font=('helvetica', 14, 'bold'))
-canvas.create_window(600, 300, window=label)
+label.config(font=('helvetica', 24, 'bold'))
+canvas.create_window(600, 250, window=label)
 
-entry = tk.Entry(root) 
-canvas.create_window(600, 340, window=entry)
+entry = tk.Entry(root, font=('helvetica', 18)) 
+canvas.create_window(600, 300, window=entry)
+
+def formatPrediction(model, output, index, user_input):
+    label = tk.Label(root, text=f"'{user_input}' is recognized as: ", font=('helvetica', 24), width=70, height=3)
+    canvas.create_window(600, 440, window=label)
+
+    labelPred = tk.Label(root, text="", width=20, height=3, font=('helvetica', 18))
+
+    if (output == 0):
+        labelPred.config(text=f"{model}: Hateful") 
+        labelPred.config(bg="red")
+
+    else:
+        labelPred.config(text=f"{model}: Not Hateful") 
+        labelPred.config(bg="green")
+
+    canvas.create_window(600, (480 + (55 * index)), window=labelPred)
+    
 
 def predictInput():
-    label = tk.Label(root, text= '',font=('helvetica', 14, 'bold'))
-    canvas.create_window(600, 530, window=label)
 
     user_input = entry.get() # get input sentence
 
@@ -62,18 +75,13 @@ def predictInput():
     new_output_svm = loaded_model_svm.predict(new_input_Tfidf)
     # Naive Bayes prediction
     new_output_nb = loaded_model_nb.predict(new_input_Tfidf)
-
-    label = tk.Label(root, text=  f"{user_input} is recognized as: ",font=('helvetica', 14))
-    canvas.create_window(600, 480, window=label)
     
-    label = tk.Label(root, text=f"SVM: {new_output_svm}", font=('helvetica', 14, 'bold'))
-    canvas.create_window(600, 530, window=label)
-
-    label = tk.Label(root, text=f"Naive Bayes: {new_output_nb}", font=('helvetica', 14, 'bold'))
-    canvas.create_window(600, 560, window=label)
+    # configure the prediction labels
+    formatPrediction("SVM", new_output_svm, 1, user_input)
+    formatPrediction("Naive Bayes", new_output_nb, 2, user_input)
     
-button = tk.Button(text='Get Predictions', command=predictInput, bg='brown', fg='white', font=('helvetica', 9, 'bold'))
-canvas.create_window(600, 400, window=button)
+button = tk.Button(text='Get Predictions', command=predictInput, bg='white', fg='black', font=('helvetica', 19, 'bold'))
+canvas.create_window(600, 350, window=button)
 
 root.mainloop()
 
