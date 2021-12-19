@@ -67,45 +67,20 @@ print("Naive Bayes Accuracy Score with Tdidf Vectorizer -> ", accuracy_score(pre
 filename = 'finalized_model_NB.sav'
 pickle.dump(Naive, open(filename, 'wb'))
 
-"""
-# ---------- RANDOM FOREST -------------
-
-# for random forest algorithm
-Train_X = Encoder.fit_transform(Train_X)
-Test_X = Encoder.fit_transform(Test_X)
-
-clf=RandomForestClassifier(n_estimators=500)
-Train_X = Train_X.reshape(-1,1) 
-clf.fit(Train_X,Train_Y)
-
-Test_X = Test_X.reshape(-1,1)
-predictions_Forest=clf.predict(Test_X)
-print("Random Forest Accuracy Score:", metrics.accuracy_score(predictions_Forest, Test_Y)*100)
-
-# save the trained naive bayes model to disk
-filename = 'finalized_model_FOREST.sav'
-pickle.dump(Naive, open(filename, 'wb'))
-"""
-
 # PLOT CONFUSION MATRIXES
-def generate_conf_matrixes(model, predictions):
+def generate_conf_matrixes(model, predictions, analyzer, vectorizer):
     mat = confusion_matrix(predictions, Test_Y)
     axis_labels=['Hateful', 'Not Hateful']
     sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False,
                 xticklabels=axis_labels, yticklabels=axis_labels)
-    plt.title(model)
+    plt.title(f"{model} with {vectorizer} ({analyzer} based)")
     plt.xlabel('Predicted Categories')
     plt.ylabel('True Categories')
     plt.show() 
 
 
 # SVM
-generate_conf_matrixes("SVM", predictions_SVM)
+generate_conf_matrixes("SVM", predictions_SVM, "word", "TFIDF")
 
 # Naive Bayes
-generate_conf_matrixes("Naive Bayes", predictions_NB)
-
-"""
-# Random Forest
-generate_conf_matrixes("Random Forest", predictions_Forest)
-"""
+generate_conf_matrixes("Naive Bayes", predictions_NB, "word", "TFIDF")
