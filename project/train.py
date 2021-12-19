@@ -8,9 +8,10 @@ from sklearn.preprocessing import LabelEncoder
 from collections import defaultdict
 from nltk.corpus import wordnet as wn
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn import model_selection, svm, naive_bayes
+from sklearn import model_selection, svm, naive_bayes, metrics
 from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
@@ -19,11 +20,6 @@ import seaborn as sns; sns.set()
 import nltk
 import pickle 
 import csv
-
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('stopwords')
 
 # read the processed data
 dp = pd.read_csv('processed_data_vol2.csv', encoding='cp1252')
@@ -71,6 +67,25 @@ print("Naive Bayes Accuracy Score with Tdidf Vectorizer -> ", accuracy_score(pre
 filename = 'finalized_model_NB.sav'
 pickle.dump(Naive, open(filename, 'wb'))
 
+"""
+# ---------- RANDOM FOREST -------------
+
+# for random forest algorithm
+Train_X = Encoder.fit_transform(Train_X)
+Test_X = Encoder.fit_transform(Test_X)
+
+clf=RandomForestClassifier(n_estimators=500)
+Train_X = Train_X.reshape(-1,1) 
+clf.fit(Train_X,Train_Y)
+
+Test_X = Test_X.reshape(-1,1)
+predictions_Forest=clf.predict(Test_X)
+print("Random Forest Accuracy Score:", metrics.accuracy_score(predictions_Forest, Test_Y)*100)
+
+# save the trained naive bayes model to disk
+filename = 'finalized_model_FOREST.sav'
+pickle.dump(Naive, open(filename, 'wb'))
+"""
 
 # PLOT CONFUSION MATRIXES
 def generate_conf_matrixes(model, predictions):
@@ -87,6 +102,10 @@ def generate_conf_matrixes(model, predictions):
 # SVM
 generate_conf_matrixes("SVM", predictions_SVM)
 
-#Naive Bayes
+# Naive Bayes
 generate_conf_matrixes("Naive Bayes", predictions_NB)
 
+"""
+# Random Forest
+generate_conf_matrixes("Random Forest", predictions_Forest)
+"""

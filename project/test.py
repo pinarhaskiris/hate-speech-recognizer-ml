@@ -29,7 +29,7 @@ Tfidf_vect = TfidfVectorizer()
 Tfidf_vect.fit(dp['text_final'])
 
 
-# INTERFACE
+# GUI
 
 root= tk.Tk()
 
